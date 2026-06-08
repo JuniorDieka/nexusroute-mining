@@ -8,7 +8,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![SignalR](https://img.shields.io/badge/SignalR-Real--time-68217A)](https://dotnet.microsoft.com/apps/aspnet/signalr)
 
-> **IMPORTANT DISCLAIMER**: This project simulates operations for **Kivu Ridge Gold Operations**, a completely **FICTIONAL** mining operation. The location, company name, assets, and all operational details are entirely invented for demonstration purposes. This does NOT represent any real mining company, site, or operation.
+> **Note**: This project is inspired by the author's professional experience in open-pit gold mining operations in eastern DRC. The software, simulated data, and operational scenarios are created for portfolio demonstration purposes and do not represent actual operational systems, proprietary data, or confidential information from any former employer.
 
 ## 🎯 Overview
 
