@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusRoute Mining - Dispatch Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>NexusRoute Mining Dispatch</h1>
+                <p class="subtitle">Kivu Ridge Gold Operations (FICTIONAL) - Real-Time Fleet Management</p>
+            </div>
+            <div class="header-status">
+                <span class="status-indicator" id="connectionStatus">
+                    <span class="status-dot disconnected"></span>
+                    <span id="statusText">Disconnected</span>
+                </span>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <aside class="sidebar">
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="overview">Overview</button>
+                    <button class="nav-btn" data-view="assets">Fleet Status</button>
+                    <button class="nav-btn" data-view="convoys">Convoys</button>
+                    <button class="nav-btn" data-view="production">Production</button>
+                    <button class="nav-btn" data-view="alerts">Alerts</button>
+                </nav>
+
+                <div class="alerts-summary" id="alertsSummary">
+                    <h3>Active Alerts</h3>
+                    <div class="alert-counts">
+                        <div class="alert-count critical">
+                            <span class="count" id="criticalCount">0</span>
+                            <span class="label">Critical</span>
+                        </div>
+                        <div class="alert-count warning">
+                            <span class="count" id="warningCount">0</span>
+                            <span class="label">Warning</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div id="overviewView" class="view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Active Assets</h3>
+                            <div class="stat-value" id="activeAssetsCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Convoys</h3>
+                            <div class="stat-value" id="activeConvoysCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Today's Production</h3>
+                            <div class="stat-value" id="todayProduction">0t</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Weekly Target</h3>
+                            <div class="stat-value" id="weeklyProgress">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="map-container">
+                        <h2>Live Asset Positions</h2>
+                        <div id="assetMap" class="map-placeholder">
+                            <p>Asset positions will be displayed here</p>
+                            <div id="assetPositions" class="asset-positions"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="assetsView" class="view">
+                    <h2>Fleet Status</h2>
+                    <div class="table-container">
+                        <table class="data-table" id="assetsTable">
+                            <thead>
+                                <tr>
+                                    <th>Asset Code</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
+                                    <th>Last Update</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">Loading assets...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="convoysView" class="view">
+                    <h2>Active Convoys</h2>
+                    <div class="table-container">
+                        <table class="data-table" id="convoysTable">
+                            <thead>
+                                <tr>
+                                    <th>Convoy Code</th>
+                                    <th>Route</th>
+                                    <th>Lead Asset</th>
+                                    <th>Cargo</th>
+                                    <th>Status</th>
+                                    <th>Departure</th>
+                                </tr>
+                            </thead>
+                            <tbody id="convoysTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">Loading convoys...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="productionView" class="view">
+                    <h2>Production Summary</h2>
+                    <div class="production-summary" id="productionSummary">
+                        <div class="stat-card">
+                            <h3>Total Tonnage</h3>
+                            <div class="stat-value" id="totalTonnage">0t</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Average Grade</h3>
+                            <div class="stat-value" id="averageGrade">0 g/t</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Target Achievement</h3>
+                            <div class="stat-value" id="targetAchievement">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alertsView" class="view">
+                    <h2>Active Alerts</h2>
+                    <div id="alertsList" class="alerts-list">
+                        <p class="loading">Loading alerts...</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@7.0.0/dist/browser/signalr.min.js"></script>
+    <script type="module" src="/js/app.js"></script>
+</body>
+</html>
