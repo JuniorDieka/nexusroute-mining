@@ -12,7 +12,7 @@
 
 ## 🎯 Overview
 
-NexusRoute Mining is a production-grade, real-time fleet dispatch and telemetry platform designed for open-pit mining operations. Built with .NET 10 and modern web technologies, it demonstrates enterprise-level architecture, real-time data streaming, and complex domain logic in a mining context.
+Real-time fleet dispatch and telemetry platform for open-pit mining operations. Demonstrates enterprise .NET architecture with SignalR real-time streaming, domain-driven design, and production-ready patterns.
 
 ---
 
@@ -55,370 +55,108 @@ Secure convoy tracking for high-value cargo transport with route monitoring and 
 
 ---
 
-### Key Features
+## Key Features
 
-- **📡 Real-Time Telemetry Ingestion** - Continuous monitoring of equipment health (engine temp, tire pressure, payload, fuel)
-- **🚛 Pit-to-Plant Cycle Optimization** - Automated cycle time calculation and bottleneck detection
-- **🛡️ Secure Convoy Tracking** - Geofence monitoring and checkpoint compliance for high-value cargo
-- **⚠️ Predictive Asset Health Alerts** - Threshold-based warnings before equipment failures
-- **📊 Production Tracking** - Real-time tonnage aggregation and grade control
-- **🎮 Built-in Simulator** - Zero-hardware demo mode with realistic synthetic data
+- **Real-Time Telemetry** - Equipment health monitoring (temp, pressure, payload, fuel)
+- **Cycle Optimization** - Automated cycle time calculation and bottleneck detection
+- **Convoy Tracking** - Geofence monitoring for high-value cargo
+- **Predictive Alerts** - Threshold-based warnings before failures
+- **Production Tracking** - Real-time tonnage and grade control
+- **Built-in Simulator** - Demo mode with realistic synthetic data
 
 ## 🏗️ Architecture
 
-```mermaid
-graph TB
-    subgraph "Client Layer"
-        UI[Vanilla JS Dashboard]
-        SignalRJS[SignalR JS Client]
-    end
-    
-    subgraph "API Layer - ASP.NET Core"
-        Controllers[REST API Controllers]
-        Hub[SignalR Dispatch Hub]
-        Auth[JWT Authentication]
-        Middleware[Exception Middleware]
-    end
-    
-    subgraph "Application Layer"
-        TelemetryService[Telemetry Service]
-        ConvoyService[Convoy Tracking]
-        ProductionService[Production Service]
-        AlertService[Alert Service]
-    end
-    
-    subgraph "Domain Layer"
-        Entities[Entities & Value Objects]
-        DomainServices[Domain Services]
-        CycleCalc[Cycle Time Calculator]
-        Geofence[Geofence Validator]
-        HealthMon[Health Monitor]
-    end
-    
-    subgraph "Infrastructure Layer"
-        EF[EF Core DbContext]
-        Repos[Repositories]
-        DB[(SQL Server)]
-    end
-    
-    subgraph "Background Services"
-        Simulator[Telemetry Simulator]
-        Recalc[Cycle Recalculation]
-    end
-    
-    UI --> Controllers
-    SignalRJS --> Hub
-    Controllers --> TelemetryService
-    Controllers --> ConvoyService
-    Controllers --> ProductionService
-    Hub --> AlertService
-    
-    TelemetryService --> CycleCalc
-    TelemetryService --> HealthMon
-    ConvoyService --> Geofence
-    
-    TelemetryService --> Repos
-    ConvoyService --> Repos
-    ProductionService --> Repos
-    
-    Repos --> EF
-    EF --> DB
-    
-    Simulator -.->|Generates| TelemetryService
-    Recalc -.->|Periodic| TelemetryService
-    
-    style Domain Layer fill:#e1ffe1
-    style DB fill:#f0f0f0
-```
+**Clean Architecture** with clear separation of concerns:
+- **Domain** - Entities, value objects, domain services
+- **Application** - Use cases, DTOs, validators
+- **Infrastructure** - EF Core, repositories, data access
+- **API** - REST controllers, SignalR hub, JWT auth
+- **Simulator** - Background services for demo data
 
-## 🚀 Quick Start (Docker - One Command)
-
-**Prerequisites**: Docker and Docker Compose installed
+## 🚀 Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/nexusroute-mining.git
+# Clone and run with Docker
+git clone https://github.com/JuniorDieka/nexusroute-mining.git
 cd nexusroute-mining
-
-# Start everything (API + SQL Server + Simulator)
 docker-compose up -d
 
-# Wait ~30 seconds for migrations and seeding
-# Open browser to http://localhost:5000
+# Open http://localhost:5000 (wait ~30s for startup)
 ```
 
-The dashboard will show live telemetry, alerts, and convoy tracking with zero configuration!
+## 🛠️ Local Development
 
-## 🛠️ Local Development Setup
-
-### Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- SQL Server 2022 (or Docker)
-- Visual Studio 2026 / VS Code with C# Dev Kit
-
-### Setup Steps
+**Prerequisites**: .NET 10 SDK, SQL Server (or Docker)
 
 ```bash
-# 1. Clone and restore
-git clone https://github.com/yourusername/nexusroute-mining.git
-cd nexusroute-mining
 dotnet restore
-
-# 2. Configure connection string
-# Edit src/NexusRoute.Api/appsettings.json
-# Update ConnectionStrings:DefaultConnection
-
-# 3. Run migrations
 cd src/NexusRoute.Api
 dotnet ef database update
-
-# 4. Run the API
 dotnet run
-
-# 5. Open browser to https://localhost:5001 or http://localhost:5000
+# Open http://localhost:5000
 ```
 
-### Configuration
+**Configuration** (`appsettings.json`):
+- `ConnectionStrings:DefaultConnection` - Database connection
+- `Jwt:SecretKey` - JWT signing key (use User Secrets)
+- `Simulator:Enabled` - Enable demo data generator
 
-Key settings in `appsettings.json`:
-
-| Setting | Description | Default |
-|---------|-------------|---------|
-| `ConnectionStrings:DefaultConnection` | SQL Server connection | `localhost,1433` |
-| `Jwt:SecretKey` | JWT signing key (min 32 chars) | See appsettings.Example.json |
-| `Simulator:Enabled` | Enable telemetry simulator | `true` |
-| `Simulator:TelemetryIntervalSeconds` | Telemetry generation frequency | `5` |
-
-**Security**: Never commit secrets! Use User Secrets for development:
+## 🧪 Testing
 
 ```bash
-dotnet user-secrets set "Jwt:SecretKey" "YourSecureKeyHere"
-```
-
-## 🧪 Running Tests
-
-```bash
-# Run all tests
 dotnet test
-
-# Run with coverage
-dotnet test /p:CollectCoverage=true
-
-# Run specific test project
-dotnet test src/NexusRoute.Tests/NexusRoute.Tests.csproj
 ```
 
-### Test Coverage
+Covers domain logic, repositories, API endpoints, and SignalR hubs.
 
-- ✅ Domain logic (cycle time, geofence, health monitoring)
-- ✅ Repository operations
-- ✅ API endpoint integration tests
-- ✅ SignalR hub tests with Testcontainers
+## 📡 API
 
-## 📡 API Documentation
+**Swagger**: `http://localhost:5000/swagger`
 
-Once running, access Swagger UI at: `http://localhost:5000/swagger`
+**REST Endpoints**: `/api/telemetry`, `/api/assets`, `/api/convoys`, `/api/production`, `/api/alerts`
 
-### Key Endpoints
+**SignalR Hub**: `/hubs/dispatch` - Real-time telemetry, alerts, convoy updates
 
-**Telemetry**
-- `POST /api/telemetry` - Ingest telemetry data
-- `GET /api/telemetry/recent?minutes=30` - Get recent telemetry
+## 🎮 Simulator
 
-**Assets**
-- `GET /api/assets` - List all assets
-- `GET /api/assets/{id}` - Get asset by ID
+Generates realistic telemetry: normal operations, alert triggers (5% chance), GPS drift, convoy monitoring.
 
-**Convoys**
-- `GET /api/convoys/active` - Get active convoys
-- `POST /api/convoys/{id}/monitor` - Monitor convoy position
+Toggle in `appsettings.json`: `"Simulator": { "Enabled": true }`
 
-**Production**
-- `GET /api/production/summary` - Production summary
-- `GET /api/production/daily` - Daily production data
+## 🏭 Technical Highlights
 
-**Alerts**
-- `GET /api/alerts/active` - Get active alerts
-- `POST /api/alerts/{id}/acknowledge` - Acknowledge alert
+- **Real-Time**: SignalR bi-directional communication, event-driven architecture
+- **Clean Architecture**: DDD with rich entities, separation of concerns, DI
+- **Domain Logic**: Haversine geofencing, cycle time computation, bottleneck detection
+- **Production-Ready**: Serilog, health checks, JWT auth, EF Core migrations, async/await
+- **Testing**: Unit + integration tests, Testcontainers, SignalR hub testing
+- **DevOps**: Docker multi-stage builds, GitHub Actions CI
 
-### SignalR Hub
+## 📊 Tech Stack
 
-Connect to `/hubs/dispatch` for real-time updates:
+**.NET 10** • **ASP.NET Core** • **SignalR** • **EF Core** • **SQL Server** • **FluentValidation** • **Serilog** • **xUnit** • **Docker** • **GitHub Actions**
 
-**Server → Client Events**
-- `ReceiveTelemetryUpdate(telemetry)`
-- `ReceiveAssetStatusUpdate(asset)`
-- `ReceiveAlert(alert)`
-- `ReceiveConvoyUpdate(convoy)`
-- `ReceiveProductionUpdate(production)`
-
-## 🎮 Demo Mode (Simulator)
-
-The built-in simulator generates realistic telemetry for a fleet of haul trucks:
-
-- **Normal Operations**: Typical temperature, pressure, payload, fuel readings
-- **Alert Triggers**: 5% chance of generating threshold violations
-- **Position Updates**: GPS coordinates with realistic drift
-- **Convoy Simulation**: Scheduled convoys with checkpoint monitoring
-
-Enable/disable in `appsettings.json`:
-
-```json
-{
-  "Simulator": {
-    "Enabled": true,
-    "TelemetryIntervalSeconds": 5
-  }
-}
-```
-
-## 🏭 What This Demonstrates
-
-### For Technical Reviewers
-
-**Real-Time Architecture**
-- SignalR for bi-directional communication
-- Event-driven telemetry ingestion
-- Debounced high-frequency data streams
-
-**Clean Architecture**
-- Domain-driven design with rich entities
-- Separation of concerns across layers
-- Dependency injection throughout
-
-**Non-Trivial Domain Logic**
-- Haversine distance calculations for geofencing
-- Cycle time computation from event logs
-- Bottleneck detection algorithms
-- Threshold-based health monitoring
-- Weighted grade aggregation
-
-**Production Readiness**
-- Structured logging (Serilog)
-- Health checks
-- Exception handling middleware
-- JWT authentication with roles
-- EF Core with indexes and migrations
-- Async/await with CancellationToken
-
-**Testing**
-- Unit tests for domain logic
-- Integration tests with WebApplicationFactory
-- Testcontainers for SQL Server
-- SignalR hub testing
-
-**DevOps**
-- Docker multi-stage builds
-- Docker Compose orchestration
-- GitHub Actions CI pipeline
-- Database migrations on startup
-
-## 📊 Technology Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Runtime** | .NET 10, C# 13 |
-| **API** | ASP.NET Core Web API |
-| **Real-Time** | SignalR |
-| **Database** | SQL Server 2022 + EF Core 10 |
-| **Validation** | FluentValidation |
-| **Logging** | Serilog |
-| **Testing** | xUnit, FluentAssertions, Moq, Testcontainers |
-| **Frontend** | Vanilla JavaScript (ES Modules), HTML5, CSS3 |
-| **Containerization** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions |
-
-## 📁 Project Structure
+## 📁 Structure
 
 ```
-NexusRoute-mining/
-├── src/
-│   ├── NexusRoute.Domain/          # Core business logic
-│   │   ├── Entities/                # Asset, Telemetry, Convoy, etc.
-│   │   ├── ValueObjects/            # GpsPosition, Geofence, CycleTime
-│   │   ├── Enums/                   # AssetType, AlertSeverity, etc.
-│   │   └── Services/                # Domain services (calculators, validators)
-│   ├── NexusRoute.Application/      # Use cases and DTOs
-│   │   ├── DTOs/                    # Data transfer objects
-│   │   ├── Services/                # Application services
-│   │   ├── Validators/              # FluentValidation validators
-│   │   └── Interfaces/              # Service interfaces
-│   ├── NexusRoute.Infrastructure/   # Data access
-│   │   ├── Data/                    # DbContext, configurations
-│   │   ├── Repositories/            # Repository implementations
-│   │   └── Seed/                    # Data seeding
-│   ├── NexusRoute.Api/              # REST API + SignalR
-│   │   ├── Controllers/             # API controllers
-│   │   ├── Hubs/                    # SignalR hubs
-│   │   ├── Middleware/              # Custom middleware
-│   │   ├── Authentication/          # JWT configuration
-│   │   └── wwwroot/                 # Frontend (HTML/CSS/JS)
-│   ├── NexusRoute.Simulator/        # Telemetry simulator
-│   │   └── Services/                # Background services
-│   └── NexusRoute.Tests/            # Tests
-│       ├── Unit/                    # Unit tests
-│       └── Integration/             # Integration tests
-├── docker-compose.yml               # Docker orchestration
-├── Dockerfile                       # Multi-stage build
-└── README.md                        # This file
+src/
+├── NexusRoute.Domain/         # Entities, value objects, domain services
+├── NexusRoute.Application/    # Use cases, DTOs, validators
+├── NexusRoute.Infrastructure/ # EF Core, repositories, data seeding
+├── NexusRoute.Api/            # Controllers, SignalR hub, JWT auth
+├── NexusRoute.Simulator/      # Background telemetry generator
+└── NexusRoute.Tests/          # Unit & integration tests
 ```
 
 ## 🔐 Security
 
-- **Authentication**: JWT Bearer tokens with role-based authorization
-- **Authorization**: Role-based access control (Dispatcher, Maintenance, Operator)
-- **SQL Injection**: EF Core parameterized queries
-- **HTTPS**: Enforced in production
-- **Secrets**: User Secrets for development, environment variables for production
-
-**Roles**:
-- `Dispatcher` - Full access to fleet and convoy management
-- `Maintenance` - Asset health monitoring and alerts
-- `Operator` - Production logging and telemetry submission
-
-## 🐛 Troubleshooting
-
-**Database connection fails**
-```bash
-# Check SQL Server is running
-docker ps | grep sqlserver
-
-# Verify connection string in appsettings.json
-# Ensure TrustServerCertificate=True for local development
-```
-
-**SignalR not connecting**
-- Check browser console for errors
-- Verify WebSocket support in browser
-- Check CORS settings if running frontend separately
-
-**Simulator not generating data**
-- Verify `Simulator:Enabled` is `true` in appsettings.json
-- Check logs for simulator startup messages
-- Wait 10-15 seconds after startup for first telemetry
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+- JWT Bearer authentication with role-based authorization
+- Roles: Dispatcher (full access), Maintenance (health monitoring), Operator (telemetry)
+- EF Core parameterized queries, HTTPS enforced, User Secrets for dev
 
 ## 📄 License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
-
-## 🙏 Acknowledgments
-
-- Fictional scenario inspired by real-world mining operations
-- Built as a portfolio demonstration of .NET enterprise architecture
-- All data, locations, and operations are entirely fictional
-
-## 📧 Contact
-
-For questions or feedback, please open an issue on GitHub.
-
----
-
-**Remember**: Kivu Ridge Gold Operations is **FICTIONAL**. This project is for demonstration and educational purposes only.
+MIT License - see [LICENSE](LICENSE)
 
 ---
 
